@@ -1,0 +1,14 @@
+<form [formGroup]="uploadForm">
+    Title:<input type="text" formControlName="title"><br>
+    Country:<select formControlName="country">
+      <option *ngFor="let con of countries" [value]="con.country_code">{{con.country_name}}</option>
+    </select><br>
+    Listen Slots:<select formControlName="limit">
+        <option *ngFor="let i of limitArray" [value]="i">{{i}}</option>
+      </select><br>
+    Lyric:<br>
+    <textarea formControlName="lyric" cols="30" rows="15"></textarea><br>
+    File:<input type="file" formControlName="mp3" #mp3File accept="audio/mpeg"><br>
+    <button type="button" (click)="onUpload()" [disabled]="this.uploadForm.invalid">Upload</button>
+
+  </form>

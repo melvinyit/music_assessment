@@ -1,0 +1,6 @@
+<button type="button" (click)="gotoUpload()">Upload</button>
+<br><br><hr><br>
+<form [formGroup]="loginForm">
+    Name:<input type="text" formControlName="name"><br>
+    <button type="button" (click)="gotoList()" [disabled]="this.loginForm.invalid">List Music</button>
+</form>

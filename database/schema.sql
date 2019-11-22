@@ -53,3 +53,11 @@ insert into users(user_id, username) values
 	('27b965f6', 'wilma'),
 	('820e8a4d', 'bambam'),
 	('fc42a34d', 'pebbles');
+    
+INSERT INTO `music`.`country` (`country_code`, `country_name`, `image_url`) VALUES ('JP', 'Japan', './assets/jp.png');
+INSERT INTO `music`.`country` (`country_code`, `country_name`, `image_url`) VALUES ('MY', 'Malaysia', './assets/my.png');
+INSERT INTO `music`.`country` (`country_code`, `country_name`, `image_url`) VALUES ('RU', 'Russia', './assets/ru.png');
+INSERT INTO `music`.`country` (`country_code`, `country_name`, `image_url`) VALUES ('SG', 'Singapore', './assets/sg.png');
+INSERT INTO `music`.`country` (`country_code`, `country_name`, `image_url`) VALUES ('UK', 'United Kingdom', './assets/uk.png');
+INSERT INTO `music`.`country` (`country_code`, `country_name`, `image_url`) VALUES ('US', 'U.S.A', './assets/us.png');
+

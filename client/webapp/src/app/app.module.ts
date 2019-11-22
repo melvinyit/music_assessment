@@ -7,11 +7,23 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TestComponentComponent } from './components/test-component/test-component.component';
 import { TestUploadComponent } from './components/test-component/test-upload.component';
+import { HomeComponent } from './components/home.component';
+import { ResultComponent } from './components/result.component';
+import { ListMusicComponent } from './components/list-music.component';
+import { DisplayMusicComponent } from './components/display-music.component';
+import { EmptyComponent } from './components/test-component/empty.component';
+import { UploadMusicComponent } from './components/upload-music.component';
 @NgModule({
   declarations: [
     AppComponent,
     TestComponentComponent,
-    TestUploadComponent
+    TestUploadComponent,
+    HomeComponent,
+    ResultComponent,
+    ListMusicComponent,
+    DisplayMusicComponent,
+    EmptyComponent,
+    UploadMusicComponent
   ],
   imports: [
     BrowserModule,
