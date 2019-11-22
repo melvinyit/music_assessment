@@ -30,10 +30,11 @@ export class HomeComponent implements OnInit {
 
   gotoCheckout(){
     this.musicSrv.verifyUser({username:this.loginForm.value.name}).then(r=>{
-      console.log(r);
+      //console.log(r);
       this.router.navigate(['checkout/music/'+r.user_id]);
     }).catch(e=>{
-      this.errMsg=e.error;
+      console.log(e);
+      this.errMsg=e.error.error;
     });
   }
 

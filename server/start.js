@@ -40,6 +40,8 @@ const api = express.Router();
 
 //MYSQL DB area
 const UPLOADMUSIC = 'INSERT INTO music SET ?';
+const CHECKOUTMUSIC = 'INSERT INTO checkout SET ?';
+const UNCHECKMUSIC = 'DELETE FROM checkout WHERE user_id=? AND music_id=?';
 const GETCOUNTRIES = 'SELECT * FROM country';
 const GETUSERBYNAME = 'SELECT * FROM users WHERE username = ?';
 const GETMUSICLIST = `SELECT m.*,c.*, IFNULL(count_table.count,0) count FROM music m 
@@ -50,7 +52,8 @@ const insertMusic = sql.mkQuery(UPLOADMUSIC);
 const getCountries = sql.mkQueryFromPool(sql.mkQuery(GETCOUNTRIES),pool);
 const getUserByName = sql.mkQueryFromPool(sql.mkQuery(GETUSERBYNAME),pool);
 const getMusicList = sql.mkQueryFromPool(sql.mkQuery(GETMUSICLIST),pool);
-
+const insertCheckout = sql.mkQueryFromPool(sql.mkQuery(CHECKOUTMUSIC),pool);
+const deleteCheckout = sql.mkQueryFromPool(sql.mkQuery(UNCHECKMUSIC),pool);
 
 //START APPLICATION
 app.use(cors());
@@ -144,6 +147,36 @@ api.post('/music/upload',mUpload.single('mp3File'),s3Util.deleteTmpFile(),(req,r
 			//console.log('THIS is VERY BAD');
 			res.status(200).json({msg:'err'});
 		});
+	});
+});
+
+api.post('/music/checkout',(req,res)=>{
+	console.log(req.body);
+	const checkoutmeta = {
+		user_id:req.body.userid,
+		music_id:parseInt(req.body.musicid),
+		timestamp:new Date()
+	}
+	insertCheckout(checkoutmeta).then(r=>{
+		console.log(r);
+		res.status(200).json({msg:'testing ok'});
+		//log into mongo, since is not important, will dont after res is return and we do not care about and error
+		mongo().insertOne(checkoutmeta);
+	}).catch(err=>{
+		console.log(err);
+		res.status(500).json({msg:'SQL error',error:err});
+	});
+});
+
+api.post('/music/uncheck',(req,res)=>{
+	console.log(req.body);
+	deleteCheckout([req.body.userid,parseInt(req.body.musicid)]).then(r=>{
+		console.log(r);
+		res.status(200).json({msg:'testing ok'});
+
+	}).catch(err=>{
+		console.log(err);
+		res.status(500).json({msg:'SQL error',error:err});
 	});
 });
 

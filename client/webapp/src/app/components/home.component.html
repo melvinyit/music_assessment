@@ -2,6 +2,7 @@
 <br><br><hr><br>
 <button type="button" (click)="gotoList()">List</button>
 <br><br><hr><br>
+<h5 *ngIf="errMsg">ERROR:{{errMsg}}</h5>
 <form [formGroup]="loginForm">
     Name:<input type="text" formControlName="name"><br>
     <button type="button" (click)="gotoCheckout()" [disabled]="this.loginForm.invalid">List Music</button>

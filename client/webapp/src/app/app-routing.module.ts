@@ -18,7 +18,7 @@ const routes: Routes = [
   {path:'result',component:ResultComponent},
   {path:'list/music',component:ListMusicComponent},
   {path:'checkout/music/:userid',component:CheckoutMusicComponent},
-  {path:'display/:musicid',component:DisplayMusicComponent},
+  {path:'display/user/:userid/music/:musicid',component:DisplayMusicComponent},
   {path:'',component:EmptyComponent,outlet:'testoutlet'},
   { path: "**", redirectTo: "/", pathMatch: 'full' }
 ];
