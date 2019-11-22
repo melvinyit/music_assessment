@@ -1,0 +1,22 @@
+<p>test-upload start</p>
+<form #form="ngForm" (ngSubmit)="testUpload(form)">
+    <label for="comments">Comments</label>
+    <br>
+    <textarea id="comments" name="comments" cols="30" rows="2" ngModel></textarea>
+    <br>
+    <label for="myImage">Image file</label>
+    <br>
+    <input type="file" name="myImage" id="myImage" ngModel #imageFile accept="image/png">
+    <br>
+    <button type="submit">Upload</button>
+  </form>
+  <hr>
+  <form [formGroup]="reactiveForm">
+    <ul>
+      <li>Input:<input type="text" formControlName="testInput"></li>
+      <li>File:<input type="file" formControlName="testFile" #imageFileReactive></li>
+      <li><button type="button" (click)="testUploadReactive()">Reactive</button></li>
+    </ul>
+
+  </form>
+<p>test-upload end</p>

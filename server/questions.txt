@@ -1,0 +1,77 @@
+Task 1
+Write your schemas below. Consider your MySQL database as part of the given music database.
+
+MYSQL
+drop database if exists music;
+
+create database music;
+
+use music;
+
+create table users (
+	user_id varchar(8) not null,
+	username varchar(32) not null,
+	primary key (user_id)
+);
+
+CREATE TABLE `music`.`country` (
+  `country_code` CHAR(2) NOT NULL,
+  `country_name` VARCHAR(45) NOT NULL,
+  `image_url` VARCHAR(256) NOT NULL,
+  PRIMARY KEY (`country_code`));
+  
+CREATE TABLE `music`.`music` (
+  `music_id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(128) NOT NULL,
+  `mp3url` varchar(256) NOT NULL,
+  `lyric` mediumtext,
+  `checkout_limit` int(2) NOT NULL DEFAULT 3,
+  `country_code` char(2) NOT NULL,
+  PRIMARY KEY (`music_id`),
+  KEY `fk_music_country_idx` (`country_code`),
+  KEY `idx_title` (`title`),
+  CONSTRAINT `fk_music_country` FOREIGN KEY (`country_code`) REFERENCES `country` (`country_code`) ON UPDATE CASCADE
+);
+
+CREATE TABLE `music`.`checkout` (
+  `user_id` VARCHAR(8) NOT NULL,
+  `music_id` INT NOT NULL,
+  `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'this is the check out timestamp',
+  PRIMARY KEY (`user_id`, `music_id`),
+  INDEX `fk_checkout_music_idx` (`music_id` ASC) VISIBLE,
+  CONSTRAINT `fk_checkout_user`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `music`.`users` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_checkout_music`
+    FOREIGN KEY (`music_id`)
+    REFERENCES `music`.`music` (`music_id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE);
+
+Users table store the user information (default given)
+Music table store all the song that will be inserted. Index created on title to facilitate of search with song title which is common.
+Country table will store all the country avaliable for selection. (this will be a fix set of data for now)
+Checkout table store all the checkout currently the users is listening to.Assuming each user only can check out one same song at one time(user_id,music_id). When the user 'uncheck' a song, the record will be deleted .
+(Question 1b)music table
+(Question 1c)checkout join music on c.user_id
+(Question 1d)checkout join user on c.music_id
+
+Explain briefly your choice of persistence store.
+The history of the song will be store in Mongo Atlas, with the following field (userid, music_id, checkout time). 
+(Question 1e) This data will permanent, thus best suited for history
+
+
+
+
+
+
+Task 7
+Using the information capture by your application's data model and the database connections/pool declared in your application, show using JavaScript, the ranking of national anthems by their listening popularity across your service's user base. You should rank your the songs from the most popular to the least popular. The ranking information must include the following 
+- song name
+- number of the times it was listen
+- the last time (date and time) the song was listen
+(Question 7)
+Aggergate data from mongo atlas
+
