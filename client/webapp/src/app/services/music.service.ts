@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { country, user } from '../model/model';
+import { country, user, music } from '../model/model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
@@ -14,6 +14,7 @@ export class MusicService {
   GETMUSICLIST='/music/list';
   CHECKOUTMUSIC='/music/checkout';
   UNCHECKMUSIC='/music/uncheck';
+  GETFULLMUSIC='/music/display/';
 
   constructor(private http:HttpClient) { }
 
@@ -44,7 +45,8 @@ export class MusicService {
   uncheckMusic(userid:string,musicid:number):Promise<any>{
     return this.http.post(this.BASEURL+this.UNCHECKMUSIC,{userid,musicid}).toPromise();
   }
-  getMusicById(id:number){
-
+  
+  getMusicById(musicid:number):Promise<music>{
+    return this.http.get<music>(this.BASEURL+this.GETFULLMUSIC+musicid).toPromise();
   }
 }

@@ -32,6 +32,7 @@ const s3 = new aws.S3({
 	secretAccessKey: dbConf.s3.secret
 });
 const bucket = s3Util.bucket(s3,'testingspace','songs');
+const butketURL = 'https://testingspace.sgp1.digitaloceanspaces.com/songs/';
 
 const mUpload = multer({ dest: __dirname + '/tmp' });
 const app = express();
@@ -44,6 +45,7 @@ const CHECKOUTMUSIC = 'INSERT INTO checkout SET ?';
 const UNCHECKMUSIC = 'DELETE FROM checkout WHERE user_id=? AND music_id=?';
 const GETCOUNTRIES = 'SELECT * FROM country';
 const GETUSERBYNAME = 'SELECT * FROM users WHERE username = ?';
+const GETMUSICBYID = 'SELECT * FROM music m JOIN country c ON m.country_code=c.country_code WHERE music_id=?';
 const GETMUSICLIST = `SELECT m.*,c.*, IFNULL(count_table.count,0) count FROM music m 
 JOIN country c ON m.country_code=c.country_code
 LEFT JOIN (SELECT count(music_id) count , music_id FROM checkout GROUP BY music_id) AS count_table ON count_table.music_id=m.music_id`;
@@ -52,6 +54,7 @@ const insertMusic = sql.mkQuery(UPLOADMUSIC);
 const getCountries = sql.mkQueryFromPool(sql.mkQuery(GETCOUNTRIES),pool);
 const getUserByName = sql.mkQueryFromPool(sql.mkQuery(GETUSERBYNAME),pool);
 const getMusicList = sql.mkQueryFromPool(sql.mkQuery(GETMUSICLIST),pool);
+const getMusicById = sql.mkQueryFromPool(sql.mkQuery(GETMUSICBYID),pool);
 const insertCheckout = sql.mkQueryFromPool(sql.mkQuery(CHECKOUTMUSIC),pool);
 const deleteCheckout = sql.mkQueryFromPool(sql.mkQuery(UNCHECKMUSIC),pool);
 
@@ -82,7 +85,7 @@ api.get('/countries',(req,res)=>{
 });
 
 api.get('/user/:username',(req,res)=>{
-	console.log(req.params.username);
+	//console.log(req.params.username);
 	getUserByName([req.params.username]).then(r=>{
 		if(r.length != 1)
 			return res.status(404).json({msg:'SQL error',error:'user not found'});
@@ -102,6 +105,25 @@ api.get('/music/list',(req,res)=>{
 		});
 		res.status(200).json(sendback);
 	}).catch(err=>{
+		console.log(err);
+		res.status(500).json({msg:'SQL error',error:err});
+	});
+});
+
+api.get('/music/display/:musicid',(req,res)=>{
+	console.log(req.params.musicid);
+	(async () => {
+		const p1 = getMusicById([parseInt(req.params.musicid)]);
+		const p2 = mongo().find({music_id:parseInt(req.params.musicid)}).count();
+		const [music,count] = await Promise.all([p1,p2]);
+		const sendback = {
+			music_id:music[0].music_id,title:music[0].title,mp3url:`${butketURL}${music[0].mp3url}`,
+			lyric:music[0].lyric || 'No lyric avaliable', checkout_limit:music[0].checkout_limit,
+			country_code:music[0].country_code,country_image_url:music[0].image_url,total_played:count
+		};
+		console.log(sendback);
+		res.status(200).json(sendback);
+	})().catch(err=>{
 		console.log(err);
 		res.status(500).json({msg:'SQL error',error:err});
 	});
@@ -127,7 +149,8 @@ api.post('/music/upload',mUpload.single('mp3File'),s3Util.deleteTmpFile(),(req,r
 	//console.log('Meta:',musicmeta);
 	pool.getConnection((err,conn)=>{
 		if (err){
-			return console.log(err);	
+			console.log(err);	
+			return res.status(500).json({msg:'SQL error',error:err});
 		}
 		(async () =>{
 			const start = await sql.startTransaction(conn);
@@ -145,20 +168,20 @@ api.post('/music/upload',mUpload.single('mp3File'),s3Util.deleteTmpFile(),(req,r
 			sql.rollback({...err});
 			conn.release();
 			//console.log('THIS is VERY BAD');
-			res.status(200).json({msg:'err'});
+			res.status(500).json({msg:'SQL error',error:err});
 		});
 	});
 });
 
 api.post('/music/checkout',(req,res)=>{
-	console.log(req.body);
+	//console.log(req.body);
 	const checkoutmeta = {
 		user_id:req.body.userid,
 		music_id:parseInt(req.body.musicid),
 		timestamp:new Date()
 	}
 	insertCheckout(checkoutmeta).then(r=>{
-		console.log(r);
+		//console.log(r);
 		res.status(200).json({msg:'testing ok'});
 		//log into mongo, since is not important, will dont after res is return and we do not care about and error
 		mongo().insertOne(checkoutmeta);
@@ -169,11 +192,10 @@ api.post('/music/checkout',(req,res)=>{
 });
 
 api.post('/music/uncheck',(req,res)=>{
-	console.log(req.body);
+	//console.log(req.body);
 	deleteCheckout([req.body.userid,parseInt(req.body.musicid)]).then(r=>{
-		console.log(r);
+		//console.log(r);
 		res.status(200).json({msg:'testing ok'});
-
 	}).catch(err=>{
 		console.log(err);
 		res.status(500).json({msg:'SQL error',error:err});

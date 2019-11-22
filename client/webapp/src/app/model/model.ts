@@ -17,7 +17,8 @@ export interface music{
     checkout_limit:number,
     country_code:string,
     country_image_url?:string,
-    current_checkout?:number
+    current_checkout?:number,
+    total_played?:number
 }
 
 export interface checkout{

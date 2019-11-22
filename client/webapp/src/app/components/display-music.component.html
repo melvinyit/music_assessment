@@ -1,3 +1,18 @@
-<p>display-music works!</p>
-
-<button type="button" (click)="uncheckMusic()">Back</button>
+<div *ngIf="musicObj.mp3url && musicObj.country_image_url">
+    <img [src]="musicObj.country_image_url">
+    <div class="right">
+        <h2>{{musicObj.title}}</h2><br>
+        <!-- removed so won't keep retriving from s3 bucket
+        <audio controls>
+                <source [src]="musicObj.mp3url" type="audio/mpeg">
+        </audio>
+        -->
+    </div>
+</div>
+<div>
+    <p style="overflow:scroll;">{{musicObj.lyric}}</p>
+</div>
+<div>
+    <p>Played:{{musicObj.total_played}}</p>
+    <button type="button" (click)="uncheckMusic()" class="right">Back</button>
+</div>

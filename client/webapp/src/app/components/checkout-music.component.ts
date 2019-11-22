@@ -34,7 +34,7 @@ export class CheckoutMusicComponent implements OnInit {
   displayMusic(musicid:number){
     //console.log('retriving music for user');
     this.musicSrv.checkoutMusic(this.userid,musicid).then(r=>{
-      console.log(r);
+      //console.log(r);
       this.router.navigate(['/display/user/'+this.userid+'/music/'+musicid]);
     }).catch(e=>{
       console.log(e);
