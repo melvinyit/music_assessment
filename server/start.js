@@ -45,6 +45,7 @@ const CHECKOUTMUSIC = 'INSERT INTO checkout SET ?';
 const UNCHECKMUSIC = 'DELETE FROM checkout WHERE user_id=? AND music_id=?';
 const GETCOUNTRIES = 'SELECT * FROM country';
 const GETUSERBYNAME = 'SELECT * FROM users WHERE username = ?';
+const GETALLMUSICTITLE = 'SELECT music_id,title FROM music';
 const GETMUSICBYID = 'SELECT * FROM music m JOIN country c ON m.country_code=c.country_code WHERE music_id=?';
 const GETMUSICLIST = `SELECT m.*,c.*, IFNULL(count_table.count,0) count FROM music m 
 JOIN country c ON m.country_code=c.country_code
@@ -52,6 +53,7 @@ LEFT JOIN (SELECT count(music_id) count , music_id FROM checkout GROUP BY music_
 
 const insertMusic = sql.mkQuery(UPLOADMUSIC);
 const getCountries = sql.mkQueryFromPool(sql.mkQuery(GETCOUNTRIES),pool);
+const getAllMusicName = sql.mkQueryFromPool(sql.mkQuery(GETALLMUSICTITLE),pool);
 const getUserByName = sql.mkQueryFromPool(sql.mkQuery(GETUSERBYNAME),pool);
 const getMusicList = sql.mkQueryFromPool(sql.mkQuery(GETMUSICLIST),pool);
 const getMusicById = sql.mkQueryFromPool(sql.mkQuery(GETMUSICBYID),pool);
@@ -199,6 +201,34 @@ api.post('/music/uncheck',(req,res)=>{
 	}).catch(err=>{
 		console.log(err);
 		res.status(500).json({msg:'SQL error',error:err});
+	});
+});
+
+api.get('/music/ranking',(req,res)=>{
+	(async () => {
+		const p1 = mongo().aggregate([
+			{$group:{_id:'$music_id',count:{$sum:1},last_timestamp: {$max: '$timestamp'}}},
+			{$sort:{count:-1}},
+			{$project:{_id:0,music_id:'$_id',count:1,last_timestamp:1}}
+			]).toArray();
+		const p2 = getAllMusicName();
+		const [data1,data2] = await Promise.all([p1,p2]);
+		//console.log(data1);
+		//console.log(data2);
+		const combine = data2.map(v=>{
+			const f = data1.find(a=>a.music_id==v.music_id);
+			console.log(f);
+			if(f == undefined){
+				return {...v,count:0};
+			}else{
+				return {...v,...f};
+			}
+		});
+		console.log('conbine',combine);
+		res.status(200).json(combine);
+	})().catch(err=>{
+		console.log(err);
+		res.status(500).json({msg:'error',error:err});
 	});
 });
 

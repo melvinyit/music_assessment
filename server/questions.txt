@@ -73,5 +73,25 @@ Using the information capture by your application's data model and the database 
 - number of the times it was listen
 - the last time (date and time) the song was listen
 (Question 7)
-Aggergate data from mongo atlas
+Aggergate data from mongo atlas and retrive data from mysql for to display of data
+http://localhost:3000/api/music/ranking
+(async () => {
+		const p1 = mongo().aggregate([
+			{$group:{_id:'$music_id',count:{$sum:1},last_timestamp: {$max: '$timestamp'}}},
+			{$sort:{count:-1}},
+			{$project:{_id:0,music_id:'$_id',count:1,last_timestamp:1}}
+			]).toArray();
+		const p2 = getAllMusicName();
+		const [data1,data2] = await Promise.all([p1,p2]);
+		const combine = data2.map(v=>{
+			const f = data1.find(a=>a.music_id==v.music_id);
+			console.log(f);
+			if(f == undefined){
+				return {...v,count:0};
+			}else{
+				return {...v,...f};
+			}
+		});
+		return combine;
+	})
 

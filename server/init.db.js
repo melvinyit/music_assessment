@@ -32,9 +32,9 @@ const testS3 = (s3,bucketname) => {
             Bucket: bucketname,
             Key: 'test.png'
         }
-        resolve();
+        //resolve();
         //remove so that will not keep calling the bucket to retrive during nodemon init refresh
-        /*
+        
         s3.getObject(params,
             (err, result) => {
                 if (err)
@@ -42,7 +42,7 @@ const testS3 = (s3,bucketname) => {
                 resolve();
             }
         )
-        */
+        
     });
 }
 
