@@ -1,1 +1,24 @@
-<p>list-music works!</p>
+<h3>List of Uploaded Song</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Flag</th>
+            <th>Title</th>
+            <th>Country</th>
+            <th>Listen Slots</th>
+            <th>Checked Out</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let i of musicList">
+            <td><img src="{{i.country_image_url}}"></td>
+            <td>{{i.title}}</td>
+            <td>{{i.country_name}}</td>
+            <td>{{i.checkout_limit}}</td>
+            <td>{{i.current_checkout}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<button type="button" (click)="gotoHome()">Home</button>

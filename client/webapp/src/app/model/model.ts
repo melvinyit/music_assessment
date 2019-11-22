@@ -1,6 +1,6 @@
 export interface user {
-    user_id:string,
-    name:string
+    user_id?:string,
+    username:string
 }
 
 export interface country{
@@ -13,13 +13,20 @@ export interface music{
     music_id?:number,
     title:string,
     mp3url?:string,
-    lyric:string,
-    limit:number,
-    country_code:string
+    lyric?:string,
+    checkout_limit:number,
+    country_code:string,
+    country_image_url?:string,
+    current_checkout?:number
 }
 
 export interface checkout{
     user_id:string,
     music_id:number,
     timestamp?:number
+}
+
+export interface response{
+    msg:string,
+    error?:string
 }

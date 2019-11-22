@@ -13,6 +13,7 @@ import { ListMusicComponent } from './components/list-music.component';
 import { DisplayMusicComponent } from './components/display-music.component';
 import { EmptyComponent } from './components/test-component/empty.component';
 import { UploadMusicComponent } from './components/upload-music.component';
+import { CheckoutMusicComponent } from './components/checkout-music.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,7 +24,8 @@ import { UploadMusicComponent } from './components/upload-music.component';
     ListMusicComponent,
     DisplayMusicComponent,
     EmptyComponent,
-    UploadMusicComponent
+    UploadMusicComponent,
+    CheckoutMusicComponent
   ],
   imports: [
     BrowserModule,

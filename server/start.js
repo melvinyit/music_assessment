@@ -41,9 +41,15 @@ const api = express.Router();
 //MYSQL DB area
 const UPLOADMUSIC = 'INSERT INTO music SET ?';
 const GETCOUNTRIES = 'SELECT * FROM country';
+const GETUSERBYNAME = 'SELECT * FROM users WHERE username = ?';
+const GETMUSICLIST = `SELECT m.*,c.*, IFNULL(count_table.count,0) count FROM music m 
+JOIN country c ON m.country_code=c.country_code
+LEFT JOIN (SELECT count(music_id) count , music_id FROM checkout GROUP BY music_id) AS count_table ON count_table.music_id=m.music_id`;
 
 const insertMusic = sql.mkQuery(UPLOADMUSIC);
 const getCountries = sql.mkQueryFromPool(sql.mkQuery(GETCOUNTRIES),pool);
+const getUserByName = sql.mkQueryFromPool(sql.mkQuery(GETUSERBYNAME),pool);
+const getMusicList = sql.mkQueryFromPool(sql.mkQuery(GETMUSICLIST),pool);
 
 
 //START APPLICATION
@@ -69,7 +75,33 @@ api.get('/countries',(req,res)=>{
 	}).catch(err=>{
 		console.log(err);
 		res.status(500).json({msg:'SQL error',error:err});
-	})
+	});
+});
+
+api.get('/user/:username',(req,res)=>{
+	console.log(req.params.username);
+	getUserByName([req.params.username]).then(r=>{
+		if(r.length != 1)
+			return res.status(404).json({msg:'SQL error',error:'user not found'});
+		//console.log(r);
+		res.status(200).json(r[0]);
+	}).catch(err=>{
+		console.log(err);
+		res.status(500).json({msg:'SQL error',error:err});
+	});
+});
+
+api.get('/music/list',(req,res)=>{
+	getMusicList().then(r=>{
+		const sendback = r.map(v=>{
+			return {music_id:v.music_id,title:v.title,checkout_limit:v.checkout_limit,current_checkout:v.count,
+				country_code:v.country_code,country_name:v.country_name,country_image_url:v.image_url};
+		});
+		res.status(200).json(sendback);
+	}).catch(err=>{
+		console.log(err);
+		res.status(500).json({msg:'SQL error',error:err});
+	});
 });
 
 api.post('/music/upload',mUpload.single('mp3File'),s3Util.deleteTmpFile(),(req,res)=>{

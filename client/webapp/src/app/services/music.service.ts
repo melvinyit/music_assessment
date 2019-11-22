@@ -10,22 +10,30 @@ export class MusicService {
   BASEURL:string='http://localhost:3000/api';
   GETCOUTRTIES:string='/countries';
   UPLOADMUSIC='/music/upload';
+  GETUSER='/user';
+  GETMUSICLIST='/music/list';
 
   constructor(private http:HttpClient) { }
 
+  //return promise country
   getCountries():Promise<any>{
     return this.http.get(this.BASEURL+this.GETCOUTRTIES).toPromise();
   }
 
+  //return promise response
   uploadMusic(formdata:FormData):Promise<any>{
     return this.http.post(this.BASEURL+this.UPLOADMUSIC,formdata).toPromise();
   }
 
-  verifyUser(user:user){
-
+  //need to change to post to hide user name
+  //return promise user
+  verifyUser(user:user):Promise<any>{
+    return this.http.get(this.BASEURL+this.GETUSER+'/'+user.username).toPromise();
   }
 
-  getMusicList(){}
+  getMusicList():Promise<any>{
+    return this.http.get(this.BASEURL+this.GETMUSICLIST).toPromise();
+  }
 
   getMusicById(id:number){
 

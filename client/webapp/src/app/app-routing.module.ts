@@ -8,6 +8,7 @@ import { UploadMusicComponent } from './components/upload-music.component';
 import { ResultComponent } from './components/result.component';
 import { ListMusicComponent } from './components/list-music.component';
 import { DisplayMusicComponent } from './components/display-music.component';
+import { CheckoutMusicComponent } from './components/checkout-music.component';
 
 
 const routes: Routes = [
@@ -15,7 +16,8 @@ const routes: Routes = [
   {path:'home',component:HomeComponent},
   {path:'upload',component:UploadMusicComponent},
   {path:'result',component:ResultComponent},
-  {path:'list/musics',component:ListMusicComponent},
+  {path:'list/music',component:ListMusicComponent},
+  {path:'checkout/music/:userid',component:CheckoutMusicComponent},
   {path:'display/:musicid',component:DisplayMusicComponent},
   {path:'',component:EmptyComponent,outlet:'testoutlet'},
   { path: "**", redirectTo: "/", pathMatch: 'full' }
